@@ -18,8 +18,9 @@ document.addEventListener('DOMContentLoaded', function () {
   let configuration;
   let userId;
 
+  //로그인 버튼 클릭 이벤트
   loginBtn.addEventListener('click', function (e) {
-    userId = inputId.value;
+    userId = inputId.value; //사용자 아이디
 
     let loginData = {
       eventOp: 'Login',
@@ -31,8 +32,8 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     try {
-      tLogBox('send', loginData);
-      signalSocketIo.emit('knowledgetalk', loginData);
+      tLogBox('send', loginData); 
+      signalSocketIo.emit('knowledgetalk', loginData);  //signalling server에 로그인 사용자 객체 전달
     } catch (err) {
       if (err instanceof SyntaxError) {
         alert(' there was a syntaxError it and try again : ' + err.message);
@@ -42,6 +43,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
+  //회의초대 버튼 클릭 이벤트
   callBtn.addEventListener('click', function (e) {
     let callData = {
       eventOp: 'Call',
@@ -54,7 +56,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     try {
       tLogBox('send', callData);
-      signalSocketIo.emit('knowledgetalk', callData);
+      signalSocketIo.emit('knowledgetalk', callData);   //signalling server에 회의초대 객체 전달
     } catch (err) {
       if (err instanceof SyntaxError) {
         alert(' there was a syntaxError it and try again : ' + err.message);
@@ -64,6 +66,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
+  //회의참여 버튼 클릭 이벤트
   joinBtn.addEventListener('click', function (e) {
     let joinData = {
       eventOp: 'Join',
@@ -87,7 +90,9 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
+  //회의종료 버튼 클릭 이벤트
   exitBtn.addEventListener('click', function (e) {
+    //로그인 버튼 제외 비활성화
     loginBtn.disabled = false;
     callBtn.disabled = true;
     joinBtn.disabled = true;
@@ -97,7 +102,7 @@ document.addEventListener('DOMContentLoaded', function () {
       eventOp: 'ExitRoom',
       reqNo: reqNo++,
       userId: inputId.value,
-      userName: inputId.value,
+      userName: inputId.value,  //필수 아님
       reqDate: nowDate(),
       roomId: roomId
     };
@@ -114,17 +119,18 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
+  //SDP요청
   async function createSDPOffer(width, height, framerate, roomId) {
     let multiVideoBox = document.querySelector('#VIDEOONETOMANY');
-    try {
 
+    try {
       localStream = await navigator.mediaDevices.getUserMedia({
         video: {
           width: width,
-          height: height,
+          height: height, 
           frameRate: {
-            ideal: framerate,
-            max: framerate
+            ideal: framerate,   //최적프레임율
+            max: framerate      //최대프레임율
           }
         },
         audio: true
@@ -167,7 +173,7 @@ document.addEventListener('DOMContentLoaded', function () {
           switch (connection.iceGatheringState) {
             case 'gathering':
               break;
-            case 'complete':
+            case 'complete':    //자기 자신에 대한 offer SDP 생성
               let sdpData = {
                 eventOp: 'SDP',
                 reqNo: reqNo,
@@ -199,6 +205,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 
+  //SDP 응답
   async function createSDPAnwser(data) {
 
     let multiVideoBox = document.querySelector('#VIDEOONETOMANY');
@@ -244,7 +251,7 @@ document.addEventListener('DOMContentLoaded', function () {
         switch (connection.iceGatheringState) {
           case 'gathering':
             break;
-          case 'complete':
+          case 'complete':    //상대방 id SDP요청
             let sdpData = {
               eventOp: 'SDP',
               reqNo: reqNo++,
@@ -253,9 +260,9 @@ document.addEventListener('DOMContentLoaded', function () {
               sdp: connection.localDescription,
               roomId: data.roomId,
               useMediaSvr: 'Y',
-              usage: 'cam',
+              usage: 'cam', //통신화면이 통화인지 화면 공유 상태인지
               isSfu: true,
-              pluginId: data.pluginId
+              pluginId: data.pluginId  //SFU방식에서 제공해주는 ID의 값
             };
 
             tLogBox('send', sdpData);
@@ -265,7 +272,7 @@ document.addEventListener('DOMContentLoaded', function () {
       }
 
       janusRemoteStreamPeers[displayId].oniceconnectionstatechange = (e) => {
-
+        //통화 종료에 대한 처리
         if ((janusRemoteStreamPeers[displayId] && janusRemoteStreamPeers[displayId].iceConnectionState === 'disconnected') ||
           (janusRemoteStreamPeers[displayId] && janusRemoteStreamPeers[displayId].iceConnectionState === 'failed') ||
           (janusRemoteStreamPeers[displayId] && janusRemoteStreamPeers[displayId].iceConnectionState === 'closed')) {
@@ -288,6 +295,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 
+  //통화 데이터 삭제
   function dispose() {
     document.getElementById('multiVideo') ? document.getElementById('multiVideo').remove() : '';
 
@@ -327,6 +335,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 
+  //메세지 기록을 위한 signalling server와의 통신 및 콜백
   signalSocketIo.on('knowledgetalk', function (data) {
     tLogBox('receive', data);
 

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang='en'>
+ 
+    <head>
+        <meta charset='UTF-8' />
+        <meta name='viewport' content='width=device-width, initial-scale=1.0' />
+        <meta http-equiv='X-UA-Compatible' content='ie=edge' />
+        <link rel="stylesheet" href="./css/wrap.css">
+        <title>전화받기</title>
+    </head>
+    <body>
+        <div class="titlebox">
+            <div class='login'>
+                id : <input id='inputId' value='melon' /> <br />
+                pw : <input id='inputPw' type='password' value='melon' /> <br />
+                <button id='loginBtn'>로그인</button>
+                <button id='joinBtn' disabled>전화받기</button>
+                <button id='exitBtn' disabled>통화종료</button>
+            </div>
+        </div>
+
+        <div class='login_message'>
+            <div id='text_print_Box'></div>
+        </div>
+
+        <input type='text' id='message' disabled>
+        <button id='chatBtn' disabled>채팅송신</button><br/>
+        <div id='chat_Box'></div>
+
+        <!-- 로그 -->
+        <div id='printBox' class='printBox'></div>
+
+        <script src='https://106.240.247.44:7101/socket.io/socket.io.js'></script>
+        <script src='./lib/common.js'></script>
+        <script src='js/web.chat.target.js'></script>
+    </body>
+ 
+</html>

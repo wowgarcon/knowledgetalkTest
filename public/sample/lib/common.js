@@ -236,6 +236,7 @@ function tTextbox(text) {
   printBox.innerText = text;
 }
 
+//채팅박스에 내용 추가
 function chatTextBox(text){
   let printBox = document.getElementById('chat_Box');
   printBox.innerText = text + '\n' + printBox.innerText;

@@ -94,6 +94,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
+    //네트워크 정보 교환
     function onIceCandidateHandler(e) {
         if (!e.candidate) return;
 
@@ -153,11 +154,11 @@ document.addEventListener('DOMContentLoaded', function () {
     
                 callBtn.disabled = true;
                 exitBtn.disabled = false;
-                navigator.mediaDevices.getUserMedia({
+                navigator.mediaDevices.getUserMedia({   // streaming video, audio (video: true, audio: true).
                     video: true,
                     audio: true
                 })
-                .then(stream => {
+                .then(stream => {       // Handles success by adding the MediaStream to the video element.
                     localStream = stream;
                     localVideo.srcObject = stream;
                 });
